@@ -1,0 +1,6 @@
+postgres_user=odoo
+postgres_pw=odoo
+pgAdmin_email=admin@example.com
+pgAdmin_pw=secret
+certbot_email=youremainl@example.com
+certbot_domain=domain.com

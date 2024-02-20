@@ -1,7 +1,7 @@
 version: '3.1'
 services:
-  odoo-stack:
-    container_name: odoo-stack
+  odoo:
+    container_name: odoo
     build:
       context: ./dockerfile
       dockerfile: odoo.Dockerfile
@@ -12,56 +12,65 @@ services:
     ports:
       - 8069:8069
     depends_on:
-      - database-stack
+      - database
     restart: always
   
-  database-stack:
-    container_name: database-stack
+  database:
+    container_name: database
     image: postgres:latest
     volumes:
-      - database-stack-data:/var/lib/postgresql/data/pgdata
-    ports:
-      - 5432:5432
+      - database-data:/var/lib/postgresql/data/pgdata
+    #ports:
+    #  - 5432:5432
     #command: -p 5433
     environment:
-      - POSTGRES_PASSWORD=odoo
-      - POSTGRES_USER=odoo
+      - POSTGRES_PASSWORD=${postgres_pw}
+      - POSTGRES_USER=${postgres_user}
       - POSTGRES_DB=postgres
       - PGDATA=/var/lib/postgresql/data/pgdata
     restart: always
 
-  pgadmin-stack:
-    container_name: pgadmin-stack
-    image: dpage/pgadmin4:5.4
+  pgadmin4:
+    container_name: pgadmin4
+    image: dpage/pgadmin4:latest
     volumes:
       - pgadmin-data:/var/lib/pgadmin
     ports:
       - 8080:80
     links:
-      - "database-stack:pgsql-server"
+      - "database:pgsql-server"
     environment:
-      PGADMIN_DEFAULT_EMAIL: admin@example.com
-      PGADMIN_DEFAULT_PASSWORD: secret
+      PGADMIN_DEFAULT_EMAIL: ${pgAdmin_email}
+      PGADMIN_DEFAULT_PASSWORD: ${pgAdmin_pw}
       PGADMIN_LISTEN_PORT: 80
     depends_on:
-      - database-stack
-    restart: always
+      - database
+    restart: unless-stopped
     
-  nginx-stack:
-    container_name: nginx-stack
-    build:
-      context: ./dockerfile
-      dockerfile: nginx.Dockerfile
+  nginx:
+    container_name: nginx
+    image: nginx:latest
     volumes:
       - ./nginx-config:/etc/nginx/conf.d
+      - ./certbot/conf:/etc/nginx/ssl
+      - ./certbot/data:/var/www/html
     ports:
       - 80:80   #non secure
       - 443:443 #ssl
     depends_on:
-      - odoo-stack
-    restart: always
+      - odoo
+    restart: unless-stopped
+
+  certbot:
+    container_name: certbot
+    image: certbot/certbot:latest
+    command: certonly --webroot --webroot-path=/var/www/html -- email ${certbot_email} --agree-tos --no-eff-email -d ${certbot_domain} -d www.${certbot_domain}
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/logs:/var/log/letsencrypt
+      - ./certbot/data:/var/www/html
 
 volumes:
   odoo-web-data:
-  database-stack-data:
+  database-data:
   pgadmin-data:

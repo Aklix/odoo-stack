@@ -33,7 +33,13 @@ sudo chmod a+r /etc/apt/keyrings/docker.asc
 
 change the odoo-config/odoo.conf `db_user` and `db_password`.
 
-change `config` file acordingly.  
+make copy from [config.example](config.example) and change `config` file acordingly.
+
+`cp config.example config`
+
+after editing config run [update_configs.sh](update_configs.sh) to update odoo configuration
+
+`./update_configs.sh` 
 
 ## Run docker compose.ylm 
 

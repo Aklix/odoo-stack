@@ -4,3 +4,4 @@ pgAdmin_email=admin@example.com
 pgAdmin_pw=secret
 certbot_email=youremainl@example.com
 certbot_domain=domain.com
+vsc_password=admin

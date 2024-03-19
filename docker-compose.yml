@@ -13,6 +13,7 @@ services:
       - 8069:8069
     depends_on:
       - database
+    #command: odoo -d db_name -u modul_ename
     restart: always
   
   database:
@@ -69,6 +70,16 @@ services:
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/logs:/var/log/letsencrypt
       - ./certbot/data:/var/www/html
+
+  vscode:
+    image: codercom/code-server
+    volumes:
+      - .:/home/coder/project
+    ports:
+      - "8080:8080"
+    environment:
+      - USER=${USER}
+      - PASSWORD=${vsc_password}
 
 volumes:
   odoo-web-data:

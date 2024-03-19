@@ -35,7 +35,9 @@ change the odoo-config/odoo.conf `db_user` and `db_password`.
 
 make copy from [config.example](config.example) and change `config` file acordingly.
 
-`cp config.example config`
+`cp configTemplates/config.example config`
+
+`cp configTemplates/odoo.conf.example odoo-config/odoo.conf`
 
 after editing config run [update_configs.sh](update_configs.sh) to update odoo configuration
 
